@@ -1,10 +1,9 @@
-let express = require('express')
-let utils = require('../utils.js')
-const {CHAINCODE_ID,SALT} = require("../constants.js")
-let router = express.Router()
+let express = require("express");
+let utils = require("../utils.js");
+const {CHAINCODE_ID, SALT} = require("../constants.js");
+let router = express.Router();
 
 // register a new company
-
 
 /**
  * @api {post} /enterprises/newenterprise   新增企业
@@ -25,25 +24,22 @@ let router = express.Router()
  * @apiSampleRequest http://localhost:4000/enterprises/newenterprise
  * @apiVersion 1.0.0
  */
-router.post('/newenterprise',function(req,res){
-  const {username,password,name,legalPersonality,registeredCaptial,dateOfEstablishment,businessScope,basicFIName,basicFIAccount,projectInvolvement} = req.body
-  const plaintext = username+password
-  let ID=utils.encrypted(plaintext,SALT)
+router.post("/newenterprise", function (req, res) {
+  const {username, password, name, legalPersonality, registeredCaptial, dateOfEstablishment, businessScope, basicFIName, basicFIAccount, projectInvolvement} = req.body;
+  const plaintext = username + password;
+  let ID = utils.encrypted(plaintext, SALT);
   // const request ="{\"id\":\""+ID+"\",\"name\":\""+name+"\",\"legalPersonality\":\""+legalPersonality+"\",\"registeredCapital\":\""+registeredCaptial+"\",\"dateOfEstablishment\":\""+dateOfEstablishment+"\",\"businessScope\":\""+businessScope+"\",\"basicFIName\":\""+basicFIName+"\",\"basicFIAccount\":\""+basicFIAccount+"\",\"projectInvolvement\":[]}"
-  let request = req.body
-  delete request.username
-  delete request.password
-  request.id = ID
-  request = JSON.stringify(req.body)
-  let results = utils.asyncInvoke(CHAINCODE_ID,"addEnterprise",[request])
-  results.then(data=>{
-      res.send({code:1,payload:"Successfully register new enterprise"})
-    })
-    .catch(err=>res.status(400).send({error:"create company fail "+ err}))
+  let request = req.body;
+  delete request.username;
+  delete request.password;
+  request.id = ID;
+  request = JSON.stringify(req.body);
+  let results = utils.asyncInvoke(CHAINCODE_ID, "addEnterprise", [request]);
+  results.then(data => {
+    res.send({code: 1, payload: "Successfully register new enterprise"});
   })
-
-
-
+    .catch(err => res.status(400).send({error: "create company fail " + err}));
+});
 
 /**
  * @api {post} /login  企业登录
@@ -70,29 +66,26 @@ router.post('/newenterprise',function(req,res){
  *  }
  * @apiVersion 1.0.0
  */
-router.post('/login/',function(req,res){
-  const plaintext = req.body.username+req.body.password
-  let ID=utils.encrypted(plaintext,SALT)
-  const results= utils.asyncQuery(CHAINCODE_ID,'query',[ID])
+router.post("/login/", function (req, res) {
+  const plaintext = req.body.username + req.body.password;
+  let ID = utils.encrypted(plaintext, SALT);
+  const results = utils.asyncQuery(CHAINCODE_ID, "query", [ID]);
   // const results= asyncQuery(CHAINCODE_ID,'readMarble',[ID])
-  results.then(data=>{
-    data = JSON.parse(data)
-    let decryptedPassword=utils.decrypted(ID,SALT)
-    if(decryptedPassword===plaintext){
-      res.cookie('id',ID)
-      res.send({code:1,payload:data})
+  results.then(data => {
+    data = JSON.parse(data);
+    let decryptedPassword = utils.decrypted(ID, SALT);
+    if (decryptedPassword === plaintext) {
+      res.cookie("id", ID);
+      res.send({code: 1, payload: data});
     }
-    else{
-      res.send({error:"password/name is incorrect"})
+    else {
+      res.send({error: "password/name is incorrect"});
     }
-        })
-        .catch(err=>res.send({
-          error:err
-        }))
   })
-
-
-
+    .catch(err => res.send({
+      error: err,
+    }));
+});
 
 // query company
 
@@ -105,17 +98,14 @@ router.post('/login/',function(req,res){
  * @apiSampleRequest http://localhost:4000/enterprises/fetchcompany/:id
  * @apiVersion 1.0.0
  */
-router.get('/fetchcompany/:id',function(req,res){
-  const results= utils.asyncQuery(CHAINCODE_ID,'query',[req.params.id])
-  results.then(data=>{
-    data = JSON.parse(data)
-      res.send({code:1,payload:data})
-    }).catch(err=>{
-      res.send({error:"doesnt exist:"+err})
-    })
-  })
+router.get("/fetchcompany/:id", function (req, res) {
+  const results = utils.asyncQuery(CHAINCODE_ID, "query", [req.params.id]);
+  results.then(data => {
+    data = JSON.parse(data);
+    res.send({code: 1, payload: data});
+  }).catch(err => {
+    res.send({error: "doesnt exist:" + err});
+  });
+});
 
-
-
-
-module.exports = router
+module.exports = router;

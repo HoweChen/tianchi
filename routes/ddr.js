@@ -1,10 +1,9 @@
-let express = require('express')
-let utils = require('../utils.js')
-const {CHAINCODE_ID,SALT} = require("../constants.js")
-let router = express.Router()
+let express = require("express");
+let utils = require("../utils.js");
+const {CHAINCODE_ID, SALT} = require("../constants.js");
+let router = express.Router();
 
 // register a new company
-
 
 /**
  * @api {post} /ddr/newddr  新增尽职报告调查
@@ -16,19 +15,18 @@ let router = express.Router()
  * @apiSampleRequest http://localhost:4000/ddr/newddr
  * @apiVersion 1.0.0
  */
-router.post('/newddr',function(req,res){
-  const {id,balanceSheet,description} = req.body
+router.post("/newddr", function (req, res) {
+  const {id, balanceSheet, description} = req.body;
 
   // const request = "{\"id\":\""+id+"\",\"balanceSheet\":\"\",\"description\":\""+description+"\"}"
-  let request = JSON.stringify(req.body)
+  let request = JSON.stringify(req.body);
 
-  let results = utils.asyncInvoke(CHAINCODE_ID,"addDDR",[request])
-  results.then(data=>{
-      res.send({code:1,payload:"Successfully register new ddr "})
-    })
-    .catch(err=>res.status(400).send({error:"create ddr fail "+ err}))
+  let results = utils.asyncInvoke(CHAINCODE_ID, "addDDR", [request]);
+  results.then(data => {
+    res.send({code: 1, payload: "Successfully register new ddr "});
   })
-
+    .catch(err => res.status(400).send({error: "create ddr fail " + err}));
+});
 
 // fetchddr
 /**
@@ -40,22 +38,14 @@ router.post('/newddr',function(req,res){
  * @apiSampleRequest http://localhost:4000/ddr/fetchddr/:id
  * @apiVersion 1.0.0
  */
- router.get('/fetchddr/:id',function(req,res){
-   const results= utils.asyncQuery(CHAINCODE_ID,'query',[req.params.id])
-   results.then(data=>{
-     data = JSON.parse(data)
-       res.send({code:1,payload:data})
-     }).catch(err=>{
-       res.send({error:"doesnt exist:"+err})
-     })
-   })
+router.get("/fetchddr/:id", function (req, res) {
+  const results = utils.asyncQuery(CHAINCODE_ID, "query", [req.params.id]);
+  results.then(data => {
+    data = JSON.parse(data);
+    res.send({code: 1, payload: data});
+  }).catch(err => {
+    res.send({error: "doesnt exist:" + err});
+  });
+});
 
-
-
-
-
-
-
-
-
-module.exports = router
+module.exports = router;

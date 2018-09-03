@@ -1,7 +1,7 @@
-let express = require('express')
-let utils = require('../utils.js')
-const {CHAINCODE_ID,SALT} = require("../constants.js")
-let router = express.Router()
+let express = require("express");
+let utils = require("../utils.js");
+const {CHAINCODE_ID, SALT} = require("../constants.js");
+let router = express.Router();
 
 /**
  * @api {post} /update  更新内容
@@ -15,16 +15,14 @@ let router = express.Router()
  * @apiSuccess {json} json返回值 成功返回值
  * @apiVersion 1.0.0
  */
-router.post('/',function(req,res){
-  let { structName,id,stringifyArgument} = req.body
-  let results = utils.asyncInvoke(CHAINCODE_ID,"update",[structName,id,stringifyArgument])
-  results.then(data=>{
-      res.send({code:1,payload:"Successfully update"})
-    })
-    .catch(err=>res.status(400).send({error:"update fail "+ err}))
+router.post("/", function (req, res) {
+  let {structName, id, stringifyArgument} = req.body;
+  let results = utils.asyncInvoke(CHAINCODE_ID, "update",
+    [structName, id, stringifyArgument]);
+  results.then(data => {
+    res.send({code: 1, payload: "Successfully update"});
   })
+    .catch(err => res.status(400).send({error: "update fail " + err}));
+});
 
-
-
-
-module.exports = router
+module.exports = router;

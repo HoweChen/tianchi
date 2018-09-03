@@ -1,11 +1,9 @@
-let express = require('express')
-let utils = require('../utils.js')
-const {CHAINCODE_ID,SALT} = require("../constants.js")
-let router = express.Router()
+let express = require("express");
+let utils = require("../utils.js");
+const {CHAINCODE_ID, SALT} = require("../constants.js");
+let router = express.Router();
 
 // register a new company
-
-
 
 /**
  * @api {post} /bid/newbid  新增招标
@@ -24,19 +22,18 @@ let router = express.Router()
  */
 
 
-router.post('/newbid',function(req,res){
-  let {id,startDate,endDate,project,involvedFIs,offers,winnerFI} = req.body
+router.post("/newbid", function (req, res) {
+  let {id, startDate, endDate, project, involvedFIs, offers, winnerFI} = req.body;
   // involvedFIs = involvedFIs.split(",").join(`\","`)
   // const request = "{\"id\":\""+id+"\",\"startDate\"\""+startDate+"\",\"endDate\":\""+endDate+"\",\"project\":\""+project+"\",\"involvedFIs\":[\""+involvedFIs+"\"],\"offers\":{},\"winnerFI\":\"\"}"
-  let request = JSON.stringify(req.body)
+  let request = JSON.stringify(req.body);
 
-  let results = utils.asyncInvoke(CHAINCODE_ID,"addBid",[request])
-  results.then(data=>{
-      res.send({code:1,payload:"Successfully register new bid"})
-    })
-    .catch(err=>res.status(400).send({error:"create bid fail "+ err}))
+  let results = utils.asyncInvoke(CHAINCODE_ID, "addBid", [request]);
+  results.then(data => {
+    res.send({code: 1, payload: "Successfully register new bid"});
   })
-
+    .catch(err => res.status(400).send({error: "create bid fail " + err}));
+});
 
 // fetchbid
 /**
@@ -48,16 +45,14 @@ router.post('/newbid',function(req,res){
  * @apiSampleRequest http://localhost:4000/bid/fetchbid/:id
  * @apiVersion 1.0.0
  */
- router.get('/fetchbid/:id',function(req,res){
-   const results= utils.asyncQuery(CHAINCODE_ID,'query',[req.params.id])
-   results.then(data=>{
-     data = JSON.parse(data)
-       res.send({code:1,payload:data})
-     }).catch(err=>{
-       res.send({error:"doesnt exist:"+err})
-     })
-   })
+router.get("/fetchbid/:id", function (req, res) {
+  const results = utils.asyncQuery(CHAINCODE_ID, "query", [req.params.id]);
+  results.then(data => {
+    data = JSON.parse(data);
+    res.send({code: 1, payload: data});
+  }).catch(err => {
+    res.send({error: "doesnt exist:" + err});
+  });
+});
 
-
-
-module.exports = router
+module.exports = router;
